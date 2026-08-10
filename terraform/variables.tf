@@ -34,3 +34,9 @@ variable "key_name" {
   description = "EC2 key pair name"
   type        = string
 }
+
+variable "project_name" {
+  description = "Project name used for resource naming"
+  type        = string
+  default     = "cloud-devops-lab-2026"
+}

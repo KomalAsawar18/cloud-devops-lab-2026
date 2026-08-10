@@ -4,6 +4,7 @@ resource "aws_instance" "bastion" {
   subnet_id              = var.public_subnet_id
   key_name               = var.key_name
   vpc_security_group_ids = [aws_security_group.bastion.id]
+
   tags = {
     Name = "cloud-devops-lab-bastion"
     Role = "bastion"
@@ -16,6 +17,9 @@ resource "aws_instance" "app" {
   subnet_id              = var.private_subnet_id
   key_name               = var.key_name
   vpc_security_group_ids = [aws_security_group.app.id]
+
+  iam_instance_profile = var.iam_instance_profile
+
   tags = {
     Name = "cloud-devops-lab-app"
     Role = "application"
