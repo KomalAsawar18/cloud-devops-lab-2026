@@ -1,0 +1,9 @@
+---
+- name: Test Ansible Vault
+  hosts: app_servers
+  become: true
+
+  tasks:
+    - name: Display Vault secret
+      ansible.builtin.debug:
+        msg: "{{ vault_test_message }}"
