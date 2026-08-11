@@ -10,3 +10,8 @@ output "role_arn" {
   description = "ARN of the EC2 IAM role"
   value       = module.iam.role_arn
 }
+
+output "cicd_public_ip" {
+  description = "Public IP of the CI/CD server"
+  value       = module.compute.cicd_public_ip
+}

@@ -11,6 +11,7 @@ module "compute" {
   source = "./modules/compute"
 
   ami_id               = var.ami_id
+  admin_cidr           = var.admin_cidr
   instance_type        = var.instance_type
   key_name             = var.key_name
   vpc_id               = module.networking.vpc_id

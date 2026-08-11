@@ -46,3 +46,26 @@ resource "aws_iam_instance_profile" "ec2" {
   }
 }
 
+resource "aws_iam_role_policy" "jenkins_ssm_parameters" {
+  name = "cloud-devops-lab-2026-jenkins-ssm-parameters"
+  role = aws_iam_role.ec2.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [
+      {
+        Effect = "Allow"
+
+        Action = [
+          "ssm:GetParameter",
+          "ssm:GetParameters"
+        ]
+
+        Resource = [
+          "arn:aws:ssm:us-east-1:*:parameter/cloud-devops-lab-2026/jenkins/*"
+        ]
+      }
+    ]
+  })
+}

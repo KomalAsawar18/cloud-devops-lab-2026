@@ -25,3 +25,18 @@ resource "aws_instance" "app" {
     Role = "application"
   }
 }
+
+resource "aws_instance" "cicd" {
+  ami                    = var.ami_id
+  instance_type          = var.instance_type
+  subnet_id              = var.public_subnet_id
+  key_name               = var.key_name
+  vpc_security_group_ids = [aws_security_group.cicd.id]
+
+  iam_instance_profile = var.iam_instance_profile
+
+  tags = {
+    Name = "cloud-devops-lab-cicd"
+    Role = "cicd"
+  }
+}

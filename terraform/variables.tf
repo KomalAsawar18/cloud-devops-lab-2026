@@ -40,3 +40,8 @@ variable "project_name" {
   type        = string
   default     = "cloud-devops-lab-2026"
 }
+
+variable "admin_cidr" {
+  description = "Trusted CIDR allowed to access administrative services"
+  type        = string
+}
