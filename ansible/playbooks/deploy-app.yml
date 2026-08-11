@@ -1,0 +1,27 @@
+---
+- name: Deploy application container
+  hosts: app_servers
+  become: true
+
+  tasks:
+    - name: Create application directory
+      ansible.builtin.file:
+        path: /opt/cloud-devops-lab
+        state: directory
+        mode: "0755"
+
+    - name: Copy application files
+      ansible.builtin.copy:
+        src: ../../app/
+        dest: /opt/cloud-devops-lab/app/
+
+    - name: Copy Docker files
+      ansible.builtin.copy:
+        src: ../../docker/
+        dest: /opt/cloud-devops-lab/docker/
+
+    - name: Build and start application
+      ansible.builtin.command:
+        cmd: docker compose -f docker/docker-compose.yml up -d --build
+        chdir: /opt/cloud-devops-lab
+      changed_when: true
