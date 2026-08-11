@@ -1,0 +1,80 @@
+---
+- name: Configure security on application server
+  hosts: app_servers
+  become: true
+
+  tasks:
+
+    - name: Install Fail2Ban
+      ansible.builtin.dnf:
+        name: fail2ban
+        state: present
+
+    - name: Enable and start Fail2Ban
+      ansible.builtin.systemd:
+        name: fail2ban
+        state: started
+        enabled: true
+
+    - name: Configure Fail2Ban SSH jail
+      ansible.builtin.copy:
+        dest: /etc/fail2ban/jail.d/sshd.local
+        owner: root
+        group: root
+        mode: "0644"
+        content: |
+          [sshd]
+          enabled = true
+          port = ssh
+          filter = sshd
+          backend = systemd
+          maxretry = 5
+          findtime = 10m
+          bantime = 1h
+
+    - name: Restart Fail2Ban
+      ansible.builtin.systemd:
+        name: fail2ban
+        state: restarted
+
+    - name: Verify Fail2Ban service
+      ansible.builtin.command:
+        cmd: systemctl is-active fail2ban
+      register: fail2ban_status
+      changed_when: false
+
+    - name: Display Fail2Ban status
+      ansible.builtin.debug:
+        msg: "Fail2Ban status: {{ fail2ban_status.stdout }}"
+
+    - name: Create devops user
+      ansible.builtin.user:
+        name: devops
+        shell: /bin/bash
+        create_home: true
+        groups: wheel
+        append: true
+        state: present
+
+    - name: Allow devops user passwordless sudo
+      ansible.builtin.copy:
+        dest: /etc/sudoers.d/devops
+        content: "devops ALL=(ALL) NOPASSWD:ALL\n"
+        owner: root
+        group: root
+        mode: "0440"
+
+    - name: Disable root SSH login
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PermitRootLogin'
+        line: 'PermitRootLogin no'
+        validate: '/usr/sbin/sshd -t -f %s'
+      notify: Restart SSH
+
+  handlers:
+
+    - name: Restart SSH
+      ansible.builtin.systemd:
+        name: sshd
+        state: restarted
