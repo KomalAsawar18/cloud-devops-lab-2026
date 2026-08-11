@@ -29,7 +29,7 @@ pipeline {
         stage('Verify Deployment') {
             steps {
                 sh 'sleep 5'
-                sh 'curl -f http://localhost:5000/health'
+                sh 'curl -f http://host.docker.internal:5000/health'
             }
         }
     }
